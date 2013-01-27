@@ -1,0 +1,40 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>ad banners</title>
+<style>
+body { margin: 0; }
+</style>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script>
+
+var filename = getURLParameter("type")+".js";
+jQuery.getScript(filename, function(){
+  var banner = randomBanner();
+  $('body').append("<a target=\"tnl_ad\" href=\""+banner["url"]+"\"><img src=\"banners/"+banner["img"]+"\"></a>");
+})
+  .fail(function(jqxhr, settings, exception) {
+    console.log("Error parsing " + filename + ": " + exception.message);
+  }
+)
+
+function randomBanner() {
+    var totalWeight = 0, cummulativeWeight = 0, i;
+    // Add up the weights.
+    for (i = 0; i < banners.length; i++) {
+        totalWeight += banners[i]["weight"];
+    }
+    console.log("Total weight: " + totalWeight);
+    var random = Math.floor(Math.random() * totalWeight);
+    // Find which bucket the random value is in.
+    for (i = 0; i < banners.length; i++) {
+        cummulativeWeight += banners[i]["weight"];
+        if (random < cummulativeWeight) {
+            return(banners[i]);
+        }
+    }
+}
+
+function getURLParameter(name){
+  return decodeURI((RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]);
+}
+</script>
